@@ -143,56 +143,47 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
   # TODO: Step 3 - Prevent your Battlesnake from colliding with other Battlesnakes
   opponents = game_state['board']['snakes']
-  # print("GAME STATE!!")
-  # print(game_state)
-  # print("PRINT OPPONENT LOOK HERE")
-  # print(opponents)
-  # only collide if we're bigger than the next snake
-  our_body_length = len(my_body)
-  # print("My body: {}".format(my_body))
-  # print("My body length: {}".format(our_body_length))
 
+  our_body_length = len(my_body)
   for opponent in opponents:
-    # if we're bigger than that snake, we don't have to worry about where their body is
-    # so only have to check if we're smaller than our opponent
+    # if we're bigger than this snake, we don't have to worry about where their body is
     their_body = opponent['body']
     their_body_length = len(their_body)
-    # print("Their body: {}".format(opponent['body']))
-    # print("Their body length: {}".format(their_body_length))
-    # print(our_body_length < their_body_length)
+    # only have to avoid collision if we're smaller than or equal to our opponent
     if our_body_length <= their_body_length:
       # check if moving right will make us collide
       block = {"x": my_head["x"] + 1, "y": my_head["y"]}
-      # print("block: {}".format(block))
       if block in their_body:
         is_move_safe["right"] = False
 
       # check if moving left will make us collide
       block = {"x": my_head["x"] - 1, "y": my_head["y"]}
-      # print("block: {}".format(block))
       if block in their_body:
         is_move_safe["left"] = False
 
       # check if moving up will make us collide
       block = {"x": my_head["x"], "y": my_head["y"] + 1}
-      # print("block: {}".format(block))
       if block in their_body:
         is_move_safe["up"] = False
 
       # check if moving down will make us collide
       block = {"x": my_head["x"], "y": my_head["y"] - 1}
-      # print("block: {}".format(block))
-      # print("b")
       if block in their_body:
         is_move_safe["down"] = False
 
       # Also need to account for if a future move will make us collide.
-      # so if a snake is heading right for a while, there's a chance
-      # it's going to keep heading right (?locality of reference - spatial?),
+      # If a snake is moving right for a while,
+      # there's a chance it's going to keep moving right
+      # (?locality of reference - spatial?),
       # so we should avoid moving that way.
-      # maybe instead of random movements, have it follow the opposite direction
-      # until it has to turn??
-      # Maybe if there's a snake close to us, we should start moving in opp direction
+
+      # maybe instead of random movements,
+      # have it follow the opposite direction until it has to turn??
+      # could prob do this by checking if their last two movements were in the
+      # same direction and then picking the opposite of that?
+
+      # Also, maybe if there's a snake close to us,
+      # we try to get away from it?
 
   print("Is move safe: {}".format(is_move_safe))
   # Are there any safe moves left?
