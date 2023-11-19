@@ -85,7 +85,6 @@ def move(game_state: typing.Dict) -> typing.Dict:
   my_head = game_state["you"]["body"][0]  # Coordinates of your head
   my_neck = game_state["you"]["body"][1]  # Coordinates of your "neck"
 
-
   # Prevent your Battlesnake from moving backwards
   if my_neck["x"] < my_head["x"]:  # Neck is left of head, don't move left
     is_move_safe["left"] = False
@@ -144,7 +143,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
   if block in my_body:
     is_move_safe["down"] = False
 
-  
+
   # TODO: Step 3 - Prevent your Battlesnake from colliding with other Battlesnakes
   # opponents = game_state['board']['snakes']
 
@@ -161,9 +160,13 @@ def move(game_state: typing.Dict) -> typing.Dict:
   # Choose a random move from the safe ones
   next_move = random.choice(safe_moves)
 
-
   # TODO: Step 4 - Move towards food instead of random, to regain health and survive longer
   # food = game_state['board']['food']
+
+
+
+  # TODO: Step 5 - Think about movements in the future before deciding on a move
+  # need to consider if the snake will be trapped by the outer walls and/or it's own body
 
   print(f"MOVE {game_state['turn']}: {next_move}")
   return {"move": next_move}
