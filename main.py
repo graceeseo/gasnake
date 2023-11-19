@@ -98,7 +98,6 @@ def move(game_state: typing.Dict) -> typing.Dict:
   elif my_neck["y"] > my_head["y"]:  # Neck is above head, don't move up
     is_move_safe["up"] = False
 
-
   # TODO: Step 1 - Prevent your Battlesnake from moving out of bounds
   board_width = game_state['board']['width']
   board_height = game_state['board']['height']
@@ -118,7 +117,6 @@ def move(game_state: typing.Dict) -> typing.Dict:
   # if x is at the bottom edge of the board, don't move down
   if my_head["y"] == 0:
     is_move_safe["down"] = False
-
 
   # TODO: Step 2 - Prevent your Battlesnake from colliding with itself
   my_body = game_state['you']['body']
@@ -143,10 +141,60 @@ def move(game_state: typing.Dict) -> typing.Dict:
   if block in my_body:
     is_move_safe["down"] = False
 
-
   # TODO: Step 3 - Prevent your Battlesnake from colliding with other Battlesnakes
-  # opponents = game_state['board']['snakes']
+  opponents = game_state['board']['snakes']
+  # print("GAME STATE!!")
+  # print(game_state)
+  # print("PRINT OPPONENT LOOK HERE")
+  # print(opponents)
+  # only collide if we're bigger than the next snake
+  our_body_length = len(my_body)
+  # print("My body: {}".format(my_body))
+  # print("My body length: {}".format(our_body_length))
 
+  for opponent in opponents:
+    # if we're bigger than that snake, we don't have to worry about where their body is
+    # so only have to check if we're smaller than our opponent
+    their_body = opponent['body']
+    their_body_length = len(their_body)
+    # print("Their body: {}".format(opponent['body']))
+    # print("Their body length: {}".format(their_body_length))
+    # print(our_body_length < their_body_length)
+    if our_body_length <= their_body_length:
+      # check if moving right will make us collide
+      block = {"x": my_head["x"] + 1, "y": my_head["y"]}
+      # print("block: {}".format(block))
+      if block in their_body:
+        is_move_safe["right"] = False
+
+      # check if moving left will make us collide
+      block = {"x": my_head["x"] - 1, "y": my_head["y"]}
+      # print("block: {}".format(block))
+      if block in their_body:
+        is_move_safe["left"] = False
+
+      # check if moving up will make us collide
+      block = {"x": my_head["x"], "y": my_head["y"] + 1}
+      # print("block: {}".format(block))
+      if block in their_body:
+        is_move_safe["up"] = False
+
+      # check if moving down will make us collide
+      block = {"x": my_head["x"], "y": my_head["y"] - 1}
+      # print("block: {}".format(block))
+      # print("b")
+      if block in their_body:
+        is_move_safe["down"] = False
+
+      # Also need to account for if a future move will make us collide.
+      # so if a snake is heading right for a while, there's a chance
+      # it's going to keep heading right (?locality of reference - spatial?),
+      # so we should avoid moving that way.
+      # maybe instead of random movements, have it follow the opposite direction
+      # until it has to turn??
+      # Maybe if there's a snake close to us, we should start moving in opp direction
+
+  print("Is move safe: {}".format(is_move_safe))
   # Are there any safe moves left?
   safe_moves = []
   for move, isSafe in is_move_safe.items():
@@ -163,12 +211,14 @@ def move(game_state: typing.Dict) -> typing.Dict:
   # TODO: Step 4 - Move towards food instead of random, to regain health and survive longer
   # food = game_state['board']['food']
 
-
+  # # we need to eat at least once every 100 moves
+  # turn = game_state['turn']
 
   # TODO: Step 5 - Think about movements in the future before deciding on a move
   # need to consider if the snake will be trapped by the outer walls and/or it's own body
 
   print(f"MOVE {game_state['turn']}: {next_move}")
+  print("")
   return {"move": next_move}
 
 
